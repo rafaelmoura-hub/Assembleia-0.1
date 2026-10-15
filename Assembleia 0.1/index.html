@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#123c30">
+  <title>Assembleia | Administração</title>
+  <link rel="stylesheet" href="adm/adm.css">
+</head>
+<body>
+  <main id="loginScreen" class="login-screen">
+    <section class="login-card">
+      <a class="brand" href="./"><span class="brand-mark">A</span><span>assembleia<span class="brand-sub">GESTÃO DIGITAL</span></span></a>
+      <p class="eyebrow">ÁREA ADMINISTRATIVA</p>
+      <h1>Bem-vindo de volta</h1>
+      <p class="muted">Entre para gerenciar suas assembleias.</p>
+      <form id="loginForm">
+        <label>Usuário<input id="loginUser" autocomplete="username" placeholder="Seu usuário" required></label>
+        <label>Senha<input id="loginPassword" type="password" autocomplete="current-password" placeholder="Sua senha" required></label>
+        <button class="button primary full" type="submit">Entrar no painel <span>→</span></button>
+        <p id="loginError" class="form-error" aria-live="polite"></p>
+      </form>
+      <div class="login-hint"><span class="hint-icon">i</span><span>Acesso inicial<br><strong>Usuário: 111111 · Senha: 1111</strong></span></div>
+    </section>
+    <aside class="login-art"><div class="art-inner">
+      <span class="art-kicker">DECISÕES QUE MOVEM</span>
+      <h2>O futuro da sua comunidade começa com uma boa assembleia.</h2>
+      <p>Organize reuniões, acompanhe quóruns e transforme votos em decisões transparentes.</p>
+      <div class="art-line"></div>
+      <div class="art-foot"><span>SEGURO · SIMPLES · PARTICIPATIVO</span><span>01 / 03</span></div>
+    </div></aside>
+  </main>
+  <script>
+    const read = (key, fallback) => {
+      try { return JSON.parse(localStorage.getItem(key)) ?? fallback; }
+      catch { return fallback; }
+    };
+    const admins = read('assembleia_admins', [{ user: '111111', password: '1111', name: 'Administrador' }]);
+    const sessionKey = 'assembleia_admin_session';
+    const signedIn = admins.some(admin => admin.user === sessionStorage.getItem(sessionKey));
+    if (signedIn) location.replace('adm/adm.html');
+    document.querySelector('#loginForm').addEventListener('submit', event => {
+      event.preventDefault();
+      const user = document.querySelector('#loginUser').value.trim();
+      const password = document.querySelector('#loginPassword').value;
+      const admin = admins.find(item => item.user === user && item.password === password);
+      if (!admin) {
+        document.querySelector('#loginError').textContent = 'Usuário ou senha inválidos.';
+        return;
+      }
+      sessionStorage.setItem(sessionKey, admin.user);
+      location.href = 'adm/adm.html';
+    });
+  </script>
+</body>
+</html>
